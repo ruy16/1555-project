@@ -337,11 +337,6 @@ begin
 end;
     /
 
-declare i integer;
-    begin
-    select SPORT_ID from SPORT where SPORT_NAME = 'ten';
-end;
-    /
 
 -----Given an Olympic game (City, Year) and an event id, display the Olympic game,
 -- event name, participant and the position along with the earned medal.

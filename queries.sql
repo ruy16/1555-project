@@ -1,0 +1,16 @@
+Select USER_ID,role_id,last_login from USER_ACCOUNT WHERE username = ?;
+SELECT sport_id from SPORT where sport_name = ?;
+Select dob from SPORT where sport_id = ?;
+Select event_id,gender from EVENT where sport_id = ?;
+SELECT PARTICIPANT_ID,medal_id FROM SCOREBOARD WHERE EVENT_ID = ? and medal_id < 4 order by medal_id ASC;
+SELECT medal_title from MEDAL where medal_id = ?;
+SELECT fname || ' ' || lname as fullname,nationality from PARTICIPANT where participant_id = ?;
+select olympic_id from OLYMPICS where olympic_num = ?;
+SELECT participant_id,position,medal_id from SCOREBOARD WHERE event_id =? and olympics_id =?;
+SELECT fname || ' ' || lname as fullname from PARTICIPANT where participant_id = ?;
+SELECT medal_title from MEDAL WHERE medal_id = ?;
+select unique country,TEAM.country_id from TEAM join COUNTRY on TEAM.country_id = COUNTRY.country_id where olympics_id = ?;
+select min(year) as firstYear from(select unique extract(year from opening_date) as year,country_id from OLYMPICS join TEAM on OLYMPICS.olympic_id = TEAM.olympics_id where country_id = ?);
+select gold_count,sliver_count,bronze_count,rank from (select cID,gold_count,sliver_count,bronze_count,DENSE_RANK() over (order by total_points desc ) as rank from countryRanking) where cID = ?;
+select player_name,gold_count,sliver_count,bronze_count from playerRank order by total_points desc fetch first ? rows only;
+SELECT * from conectedAthlete;

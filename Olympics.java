@@ -15,11 +15,7 @@ public class Olympics {
 			//establish the connection
 			Class.forName("oracle.jdbc.driver.OracleDriver"); 
 			String dbacct,passwrd;
-			BufferedReader io = new BufferedReader(new InputStreamReader(System.in));
-			//System.out.println("Enter your database username\n");
-			//dbacct = io.readLine();
-			//System.out.println("Enter your database password\n");
-			//passwrd = io.readLine();			
+			BufferedReader io = new BufferedReader(new InputStreamReader(System.in));			
 			dbacct = "ruy16";
 			passwrd = "4203261";
 			Connection conn = DriverManager.getConnection("jdbc:oracle:thin:@class3.cs.pitt.edu:1521:dbclass", dbacct, passwrd);
@@ -222,11 +218,18 @@ public class Olympics {
 		catch (ClassNotFoundException x) {
 				System.out.println("Driver could not be loaded");
 			}
-		catch (Exception e) {
+		catch (NumberFormatException n ) {
+			System.out.println("You entered something bad!");
+		}
+		catch (SQLException e) {
             System.out.println(
                     "Error connecting to database. Printing stack trace: ");
             e.printStackTrace();
         }
+		catch (Exception s) {
+			System.out.println("Unknown command");
+		}
+
 	}
 
 	public static void createUser(Connection con,String userName,String passkey,int role_id)  {
@@ -239,7 +242,11 @@ public class Olympics {
 			callFunction.execute();
 			int result = callFunction.getInt(1);
 			System.out.print(String.format("Your user name: %s User ID:%d\n", userName,result));
-		}catch(SQLException e){
+		}
+		catch(SQLIntegrityConstraintViolationException s) {
+			System.out.println("Username already exits!");
+		}
+		catch(SQLException e){
 			e.printStackTrace();
 		}
 	}
@@ -251,8 +258,12 @@ public class Olympics {
 			callFuntionDropUser.execute();
 			String output = callFuntionDropUser.getNString(1);
 			System.out.println(String.format("You have deleted user:%s \n", output));
-		}catch(SQLException e) {
-			e.printStackTrace();
+		}
+		catch(SQLIntegrityConstraintViolationException s) {
+			System.out.println("User doesn't exits!");
+		}
+		catch(SQLException e) {
+			System.out.println("Something bad happened, check your input");
 		}
 	}
 	public static void createEvent(Connection con,int sportID,int venueID,String gender,String time) {
@@ -267,8 +278,11 @@ public class Olympics {
 			int output = callFuntionCreateEvent.getInt(1);
 			System.out.println(String.format("You have created new event, Event id:%d\n",output));
 		}
+		catch(SQLIntegrityConstraintViolationException s) {
+			System.out.println("Event already exits!");
+		}
 		catch(SQLException e) {
-		e.printStackTrace();
+			System.out.println("Something bad happened, check your inputs");
 		}
 	}
 	public static void addEventOutcome(Connection con,int olympicsID,int eventID,int participantID,int position) {
@@ -288,8 +302,11 @@ public class Olympics {
 				System.out.println(String.format("Failed to add event outcome, check your input!\n",output));
 			}
 		}
+		catch(SQLIntegrityConstraintViolationException s) {
+			System.out.println("Failed to add event outcome,check if information was valid");
+		}
 		catch(SQLException e) {
-		e.printStackTrace();
+			System.out.println("Something bad happened, check your inputs");
 		}
 		
 	}
@@ -306,8 +323,12 @@ public class Olympics {
 			callCreateTeam.execute();
 			int output = callCreateTeam.getInt(1);
 			System.out.println(String.format("You have added a new team, id:%d\n", output));
-		}catch(SQLException e) {
-			e.printStackTrace();
+		}
+		catch(SQLIntegrityConstraintViolationException s) {
+			System.out.println("Team already exists!");
+		}
+		catch(SQLException e) {
+			System.out.println("Something bad happened, check your inputs");
 		}
 	}
 	public static void registerTeam(Connection con,int event_id,int team_id) {
@@ -318,8 +339,12 @@ public class Olympics {
 			callFuntionRegisterTeam.setInt(3, team_id);
 			callFuntionRegisterTeam.execute();
 			System.out.println("Successfully registered for event\n");
-		}catch(SQLException e) {
-			e.printStackTrace();
+		}
+		catch(SQLIntegrityConstraintViolationException s) {
+			System.out.println("Event doesn't exit!");
+		}
+		catch(SQLException e) {
+			System.out.println("Something bad happened, check your inputs");
 		}
 		
 	}
@@ -336,9 +361,11 @@ public class Olympics {
 			int result = callFuntionAddP.getInt(1);
 			System.out.println(String.format("Participant %d added\n",result));
 		}
-			
+		catch(SQLIntegrityConstraintViolationException s) {
+			System.out.println("participant already exists!");
+		}
 		catch(SQLException e) {
-			e.printStackTrace();
+			System.out.println("Something bad happened, check your inputs");
 		}
 		
 	}
@@ -350,8 +377,12 @@ public class Olympics {
 			callFuntionAddTMember.setInt(3, partID);
 			callFuntionAddTMember.execute();
 			System.out.println("Successfully added member\n");
-		}catch(SQLException e) {
-			e.printStackTrace();
+		}
+		catch(SQLIntegrityConstraintViolationException s) {
+			System.out.println("Team or player not found!");
+		}
+		catch(SQLException e) {
+			System.out.println("Something bad happened, check your inputs");
 		}
 		
 	}
@@ -362,8 +393,12 @@ public class Olympics {
 			callFuntionDropTMember.setInt(2, partID);
 			callFuntionDropTMember.execute();
 			System.out.println("Successfully dropped member\n");
-		}catch(SQLException e) {
-			e.printStackTrace();
+		}
+		catch(SQLIntegrityConstraintViolationException s) {
+			System.out.println("TeamMember doesn't exist!");
+		}
+		catch(SQLException e) {
+			System.out.println("Something bad happened, check your inputs");
 		}
 	}
 	
@@ -388,15 +423,13 @@ public class Olympics {
 			}
 			
 		}catch(SQLException e) {
-			e.printStackTrace();
+			System.out.println("Something bad happened, check your inputs");
 		}
 		return -1;
 	}
 	public static void displaySport(Connection con,String Sname) {
 		int sportid = 0;
 		String yearAdded = "";
-		//String eventInfo = "";
-		//String[] medalWinner;
 		try {
 			//Retrieve the sport id first
 			String stamt0 = "SELECT sport_id from SPORT where sport_name = ?";
@@ -465,8 +498,9 @@ public class Olympics {
 				}
 			}
 			
-		}catch(SQLException e){
-			e.printStackTrace();	
+		}
+		catch(SQLException e){
+			System.out.println("Something bad happened, check your inputs");	
 		}
 	}
 	public static void displayEvent(Connection con,String city,String year,int eventID) {
@@ -478,7 +512,7 @@ public class Olympics {
 			callGetONum.setString(3,city);
 			callGetONum.execute();
 			String oNum = callGetONum.getString(1);
-			if(Integer.parseInt(oNum) == -1) {
+			if(oNum.equals("-1")) {
 				System.out.println("Wrong information!");
 				return;
 			}
@@ -542,13 +576,15 @@ public class Olympics {
 			}
 			
 		}catch(SQLException e) {
-			e.printStackTrace();
+			System.out.println("Something bad happened, check your inputs");
+		}
+		catch(NumberFormatException s) {
+			System.out.println("What did you enter?!");
 		}
 	}
 	public static void countryRanking(Connection con,int olympicID) {
 		try {
 			String countryName = "";
-			String countryAbbrev = "";
 			int goldCount = 0;
 			int sliverCount = 0;
 			int bronzeCount = 0;
@@ -595,7 +631,7 @@ public class Olympics {
 			}
 			con.setAutoCommit(true);
 		}catch(SQLException e) {
-			e.printStackTrace();
+			System.out.println("Invaild Olympic ID");
 		}
 
 	}
@@ -617,7 +653,7 @@ public class Olympics {
 			}
 			con.setAutoCommit(true);
 		}catch(SQLException e) {
-			e.printStackTrace();
+			System.out.println("Invalid Olympic ID");
 		}
 	}
 	public static void connectedAthlete(Connection con,int athleteID,int olympicsID,int n) {
@@ -634,7 +670,7 @@ public class Olympics {
 				System.out.println("Nothing was found");
 				return;
 			}
-			System.out.println("These athletes are connected:");
+			System.out.println(String.format("These athletes are connected to athelete %d:",athleteID));
 			PreparedStatement p = con.prepareStatement(stamt);
 			p.clearParameters();
 			ResultSet r = p.executeQuery();
@@ -644,7 +680,7 @@ public class Olympics {
 			}
 			con.setAutoCommit(true);
 		}catch(SQLException e) {
-			e.printStackTrace();
+			System.out.println("Something bad happened, check your inputs");
 		}
 		
 	}
@@ -656,13 +692,18 @@ public class Olympics {
 			callLogout.setInt(2,userID);
 			callLogout.execute();
 		}catch(SQLException e) {
-			e.printStackTrace();
+			System.out.println("Something bad happened, check your inputs");
 		}
 		
 	}
 	
 	public static void exit(Connection con) throws SQLException {
+		try {
 		con.close();
 		System.exit(0);
+		}
+		catch(SQLException e) {
+			System.out.println("Connection lost, please force quit");
+		}
 	}
 }
