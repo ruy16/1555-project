@@ -15,7 +15,9 @@ public class Olympics {
 			//establish the connection
 			Class.forName("oracle.jdbc.driver.OracleDriver"); 
 			String dbacct,passwrd;
-			BufferedReader io = new BufferedReader(new InputStreamReader(System.in));			
+			BufferedReader io = new BufferedReader(new InputStreamReader(System.in));
+			// this server login info is predefined
+			// change the server and user accordingly 			
 			dbacct = "ruy16";
 			passwrd = "4203261";
 			Connection conn = DriverManager.getConnection("jdbc:oracle:thin:@class3.cs.pitt.edu:1521:dbclass", dbacct, passwrd);
@@ -97,6 +99,7 @@ public class Olympics {
 				System.out.println("Enter 11 to logout");
 				System.out.println("Enter 12 to exit");
 				user_option = Integer.parseInt((console.readLine()));
+				//function entries
 				if(roleID == 0 && user_option == 1) {
 					String userN;
 					String passW;
@@ -208,6 +211,7 @@ public class Olympics {
 					continue;
 				}
 				else {
+					//if you get here the input is nnot valid
 					System.out.println("Unknown operation!");
 				}
 				
