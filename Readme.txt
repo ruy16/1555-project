@@ -9,7 +9,7 @@ Running:
 	java -cp ojdbc7.jar:. Olympics
 	
 Interface:
-You will be asked to end a num to login or exit the system upon running, enter your option and hit enter.
+You will be asked to enter a num to login or exit the system upon running, enter your option and hit enter.
 Once you have logged in based on the user level, list of options will be shown, enter an option and hit enter.
 All inputs are case sensitive! 
 	
